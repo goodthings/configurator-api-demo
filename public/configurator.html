@@ -45,13 +45,13 @@
     }
 
     const addItem = (item) => {
-      cart.addItem(item, (bool) => {
+      cart.addItem(item, items => {
         if(items) refreshCart(items);
       });
     }
 
     const removeItem = (item) => {
-      cart.removeItem(item, bool => {
+      cart.removeItem(item, items => {
         if(items) refreshCart(items);
       });
     }
