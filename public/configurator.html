@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurator Iframe</title>
+</head>
+<body>
+  <h1>Configurator Iframe</h1>
+  <div>
+    <button onclick="clearCart()">Clear Cart</button>
+  </div>
+  <br>
+  <button onclick="addItem('002')">Add Item 002</button>
+  <button onclick="addItem('003')">Add Item 003</button>
+  <button onclick="addItem('004')">Add Item 004</button>
+  <ul id="cart"></ul>
+
+  <script>    
+
+    // get parent cart object
+    const cart = parent.cart;
+
+    // functions available
+    // 
+    // cart.clear() - clears localStorage
+    // 
+    // cart.getCart() - returns array of skus
+    // 
+    // cart.addItem(sku, callbackFunc)
+    // - pass sku string to add item, callback returns false (item already existed) or cart array
+    // 
+    // cart.removeItem(sku, callbackFunc)
+    // - pass sku string to remove item, callback returns false (item doesn't exist) or cart array
+    // 
+    // cart.isItemInCart(sku) - pass sku string to return boolean
+
+    
+    // gets list
+    const cartElement = document.getElementById('cart');
+
+    const clearCart = () => {
+      cart.clear();
+      refreshCart();
+    }
+
+    const addItem = (item) => {
+      cart.addItem(item, (bool) => {
+        if(bool) refreshCart();
+      });
+    }
+
+    const removeItem = (item) => {
+      cart.removeItem(item, bool => {
+        if(bool) refreshCart();
+      });
+    }
+
+    // grab the cart from local storage on configurator load
+    parent.document.getElementById('configurator').onload = function() {
+      console.log('configurator loaded');
+      refreshCart();
+    }
+
+    // this updates the cart list render (for demo purposes only)
+    const refreshCart = (items = cart.getCart()) => {
+      if (items) {
+        cartElement.innerHTML = items.map(item => (
+          `<li>${item} - <button onclick='removeItem("${item}")'>remove</button></li>`
+        )).join('')
+      } else {
+        cartElement.innerHTML = '';
+        console.log('no items in the cart')
+      }
+    }
+  </script>
+</body>
+</html>
